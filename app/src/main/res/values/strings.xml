@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TheNews</string>
+    <string name="title_activity_main">The News</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="add_id">ca-app-pub-5189421275158525~7707869634</string>
+    <string name="api">6069225c835e4bfe800d3de6eb0b36fd</string>
+</resources>

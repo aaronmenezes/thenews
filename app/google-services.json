@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "960817742761",
+    "firebase_url": "https://weatherforecast-ab5c7.firebaseio.com",
+    "project_id": "weatherforecast-ab5c7",
+    "storage_bucket": "weatherforecast-ab5c7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960817742761:android:62e0c4ab4131273eeabab8",
+        "android_client_info": {
+          "package_name": "com.kyser.demosuite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960817742761-2t9il2s92dughgmcdt988p43m53karlr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kyser.demosuite",
+            "certificate_hash": "e3a5aa0b9a3435aa03c54f0bca1f3949130a19f4"
+          }
+        },
+        {
+          "client_id": "960817742761-uoojtlha98vsb1kli4dsptvocsbpltk1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkiINkmB5yJyG84Swwk2ltM7GRHvchd0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960817742761-uoojtlha98vsb1kli4dsptvocsbpltk1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960817742761:android:0c8bfdc76bccf798eabab8",
+        "android_client_info": {
+          "package_name": "com.kyser.thenews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960817742761-ir2k4gks4p7cesv5g0lelo65fg1f8ucv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kyser.thenews",
+            "certificate_hash": "e3a5aa0b9a3435aa03c54f0bca1f3949130a19f4"
+          }
+        },
+        {
+          "client_id": "960817742761-uoojtlha98vsb1kli4dsptvocsbpltk1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkiINkmB5yJyG84Swwk2ltM7GRHvchd0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960817742761-uoojtlha98vsb1kli4dsptvocsbpltk1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
