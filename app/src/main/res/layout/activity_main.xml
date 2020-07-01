@@ -13,21 +13,48 @@
         android:layout_height="wrap_content"
         android:background="@color/royal_navy">
 
+        <ImageButton
+            android:id="@+id/tool_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tool_logo"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/search_background"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            app:srcCompat="@android:drawable/ic_menu_search" />
+
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/tool_logo"
             android:layout_width="256dp"
             android:layout_height="64dp"
-            android:scaleType="fitXY"
             android:layout_centerHorizontal="true"
+            android:scaleType="fitXY"
             app:srcCompat="@drawable/news_logo_1" />
 
     </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/tool_search_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/app_toolbar"
+        android:paddingHorizontal="10dp">
+
+        <EditText
+            android:id="@+id/tool_search_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:visibility="gone"/>
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/news_cast"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/app_toolbar"
+        android:layout_below="@id/tool_search_frame"
         android:padding="10dp"/>
 
     <com.google.android.gms.ads.AdView

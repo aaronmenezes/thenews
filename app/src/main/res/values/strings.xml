@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TheNews</string>
+    <string name="app_name">The News</string>
     <string name="title_activity_main">The News</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>

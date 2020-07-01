@@ -8,11 +8,16 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -24,29 +29,52 @@ import com.kyser.thenews.component.SpaceItemDecoration;
 import com.kyser.thenews.component.WebContentFragment;
 import com.kyser.thenews.newsstream.model.Article;
 
-public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.ItemSelection {
+import java.util.Objects;
+
+public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.ItemSelection, TextWatcher {
 
     private NewsCastLiveData mNewsCastData;
     private RecyclerView mNewsList;
     private NewsItemAdaptor mNewscastAdaptor;
+    private WebContentFragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Log.d("==================","===status "+initializationStatus.getAdapterStatusMap().entrySet().toString());
-            }
+        mFragment = (WebContentFragment) getSupportFragmentManager().findFragmentById(R.id.content_web_fragment);
+        setAdView();
+
+        findViewById(R.id.tool_search).setOnClickListener(view -> {
+            toggleSearch();
         });
-        AdView mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
 
         setRecyclerView();
         initViewModel();
         findViewById(R.id.content_web_fragment).setVisibility(View.GONE);
+    }
+
+    private void setAdView() {
+        AdView mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+    }
+
+    private void toggleSearch() {
+        EditText mEditText = findViewById(R.id.tool_search_input);
+        ImageButton mSearchButton = findViewById(R.id.tool_search);
+        if (mEditText.getVisibility() == View.VISIBLE){
+            mEditText.setVisibility(View.GONE);
+            mSearchButton.setSelected(false);
+            resetSearch();
+            mEditText.removeTextChangedListener(this);
+            mEditText.setText("");
+        }else {
+            mSearchButton.setSelected(true);
+            mEditText.setVisibility(View.VISIBLE);
+            mEditText.addTextChangedListener(this);
+            mEditText.requestFocus();
+        }
     }
 
     private void setRecyclerView() {
@@ -64,7 +92,18 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
 
     private void observeViewModel(NewsCastLiveData newsCastData) {
         newsCastData.getNewsCastModel().observe(this, projects -> {
-            Log.v("==============="," "+projects.getTotalResults());
+            Log.v("====="," "+projects.getTotalResults());
+            mNewscastAdaptor.setNewsResponse(projects);
+        });
+    }
+
+    private void resetSearch(){
+        mNewscastAdaptor.setNewsResponse(mNewsCastData.getNewsCastModel().getValue());
+    }
+
+    private void searchArticles(String query) {
+        mNewsCastData.getSearchResult(query);
+        mNewsCastData.getSearchModel().observe(this, projects -> {
             mNewscastAdaptor.setNewsResponse(projects);
         });
     }
@@ -92,7 +131,29 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
 
     @Override
     public void onItemSelection(Article article, int position) {
-        WebContentFragment fragment = (WebContentFragment) getSupportFragmentManager().findFragmentById(R.id.content_web_fragment);
-        fragment.setWebContentView(article);
+        mFragment.setWebContentView(article);
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+        if(editable.length()==0){
+            resetSearch();
+        }else
+            searchArticles(editable.toString());
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mFragment.isVisible())
+            mFragment.hide();
+        else{
+           finish();
+        }
     }
 }

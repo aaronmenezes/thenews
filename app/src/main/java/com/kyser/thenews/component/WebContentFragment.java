@@ -31,9 +31,13 @@ public class WebContentFragment extends Fragment {
         mContentView = view.findViewById(R.id.fullscreen_content);
         mContentView.setWebViewClient(new WebViewClient());
         view.findViewById(R.id.content_back).setOnClickListener(view1 -> {
-            mContentView.loadUrl(" ");
-            view.setVisibility(View.GONE);
+            hide();
         });
+    }
+
+    public void hide() {
+        mContentView.loadUrl(" ");
+        getView().setVisibility(View.GONE);
     }
 
     @Override

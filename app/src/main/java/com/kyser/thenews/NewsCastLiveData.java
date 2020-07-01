@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 public class NewsCastLiveData  extends AndroidViewModel {
 
     private MutableLiveData<NewsResponse> mediaListObservable;
+    private MutableLiveData<NewsResponse> mSearchResultList;
 
     public NewsCastLiveData(Application application) {
         super(application);
@@ -20,7 +21,14 @@ public class NewsCastLiveData  extends AndroidViewModel {
         mediaListObservable = NewsSource.getInstance().getLatestNews("in");
     }
 
+    public void getSearchResult(String query){
+        mSearchResultList = NewsSource.getInstance().getSearchResult(query);
+    }
+
     public MutableLiveData<NewsResponse> getNewsCastModel(){
        return mediaListObservable;
+    }
+    public MutableLiveData<NewsResponse> getSearchModel(){
+        return mSearchResultList;
     }
 }
