@@ -31,12 +31,7 @@ public class Splash extends AppCompatActivity {
     }
 
     private void initAdSdk() {
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Log.d("======","===status "+initializationStatus.getAdapterStatusMap().entrySet().toString());
-            }
-        });
+        MobileAds.initialize(this, initializationStatus -> Log.d("======","===status "+initializationStatus.getAdapterStatusMap().entrySet().toString()));
     }
 
     private void setLevel() {
