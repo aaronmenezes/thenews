@@ -17,7 +17,6 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 
 public class Splash extends AppCompatActivity {
 
-    private final  int mStep = 300;
     private Runnable mClipRunnable;
     private ClipDrawable mClipDrawable;
 
@@ -35,9 +34,10 @@ public class Splash extends AppCompatActivity {
     }
 
     private void setLevel() {
-        mClipDrawable.setLevel( mClipDrawable.getLevel()+mStep);
+        int mStep = 200;
+        mClipDrawable.setLevel( mClipDrawable.getLevel()+ mStep);
         if( mClipDrawable.getLevel() < 10000 )
-            new Handler().postDelayed(mClipRunnable,100);
+            new Handler().postDelayed(mClipRunnable,50);
         else {
             Intent launchIntent = new Intent(this, MainActivity.class);
             launchIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

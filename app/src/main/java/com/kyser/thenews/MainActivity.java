@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
@@ -34,9 +35,10 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.ItemSelection, TextWatcher {
 
     private NewsCastLiveData mNewsCastData;
-    private RecyclerView mNewsList;
     private NewsItemAdaptor mNewscastAdaptor;
     private WebContentFragment mFragment;
+    private InterstitialAd mInterstitialAd;
+    private int mInterstitialCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +60,15 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
         AdView mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
     }
 
     private void toggleSearch() {
         EditText mEditText = findViewById(R.id.tool_search_input);
         ImageButton mSearchButton = findViewById(R.id.tool_search);
+
         if (mEditText.getVisibility() == View.VISIBLE){
             mEditText.setVisibility(View.GONE);
             mSearchButton.setSelected(false);
@@ -78,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
     }
 
     private void setRecyclerView() {
-        mNewsList = (RecyclerView)findViewById(R.id.news_cast);
+        RecyclerView mNewsList = findViewById(R.id.news_cast);
         mNewsList.setLayoutManager(new LinearLayoutManager(this,RecyclerView.VERTICAL,false));
         mNewsList.addItemDecoration(new SpaceItemDecoration(40,0));
         mNewscastAdaptor = new NewsItemAdaptor(this,this);
@@ -129,9 +135,15 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
+    public void showInterstitial(){
+        if(mInterstitialAd.isLoaded() && mInterstitialCounter%5==0)
+            mInterstitialAd.show();
+        mInterstitialCounter++;
+    }
     @Override
     public void onItemSelection(Article article, int position) {
         mFragment.setWebContentView(article);
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
     }
 
     @Override
