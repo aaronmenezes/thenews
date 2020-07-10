@@ -5,4 +5,6 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="add_id">ca-app-pub-5189421275158525~7707869634</string>
     <string name="api">6069225c835e4bfe800d3de6eb0b36fd</string>
+    <string name="india_news">India News</string>
+    <string name="search_pre_label">Articles for : </string>
 </resources>

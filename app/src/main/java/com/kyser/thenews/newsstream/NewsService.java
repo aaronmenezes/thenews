@@ -14,4 +14,7 @@ public interface NewsService {
 
     @GET("everything")
     Call<NewsResponse> getEverything(@Query("apiKey") String apiKey, @Query("q") String q, @Query("pageSize") String pageSize);
+
+    @GET("top-headlines")
+    Call<NewsResponse> getCategory(@Query("apiKey") String apiKey, @Query("category") String category, @Query("pageSize") String pageSize);
 }

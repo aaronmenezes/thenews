@@ -67,4 +67,21 @@ public class NewsSource {
         });
         return newsResponseMutableLiveData;
     }
+
+    public MutableLiveData<NewsResponse> getCategoryResult(String category){
+        MutableLiveData<NewsResponse>  newsResponseMutableLiveData = new MutableLiveData<>();
+        mService.getCategory("6069225c835e4bfe800d3de6eb0b36fd",category,"100").enqueue(new Callback<NewsResponse>() {
+            @Override
+            public void onResponse(Call<NewsResponse> call, Response<NewsResponse> response) {
+                Log.v("=======","-----"+response);
+                newsResponseMutableLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<NewsResponse> call, Throwable t) {
+                Log.e("==============","===="+t.getLocalizedMessage());
+            }
+        });
+        return newsResponseMutableLiveData;
+    }
 }

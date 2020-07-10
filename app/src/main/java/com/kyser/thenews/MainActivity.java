@@ -9,15 +9,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -30,30 +37,86 @@ import com.kyser.thenews.component.SpaceItemDecoration;
 import com.kyser.thenews.component.WebContentFragment;
 import com.kyser.thenews.newsstream.model.Article;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.ItemSelection, TextWatcher {
+public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.ItemSelection, TextWatcher, AdapterView.OnItemClickListener {
 
     private NewsCastLiveData mNewsCastData;
     private NewsItemAdaptor mNewscastAdaptor;
     private WebContentFragment mFragment;
     private InterstitialAd mInterstitialAd;
     private int mInterstitialCounter = 0;
+    private final String[] mCategories = {"India","Business", "Entertainment", "General", "Health", "Science ", "Sports", "Technology"};
+    private TextToSpeech mTTS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mFragment = (WebContentFragment) getSupportFragmentManager().findFragmentById(R.id.content_web_fragment);
+        initTTS();
         setAdView();
+        setFilterCategory();
 
         findViewById(R.id.tool_search).setOnClickListener(view -> {
             toggleSearch();
         });
+        findViewById(R.id.cat_menu).setOnClickListener(view -> toggleMenu());
+        findViewById(R.id.close_menu).setOnClickListener(view -> toggleMenu());
+        findViewById(R.id.menu_overlay).setOnClickListener(view -> toggleMenu());
+        findViewById(R.id.tts_btn).setOnClickListener(view -> { toggleReadOut();});
 
         setRecyclerView();
         initViewModel();
         findViewById(R.id.content_web_fragment).setVisibility(View.GONE);
+    }
+
+    private void initTTS() {
+        mTTS=new TextToSpeech(getApplicationContext(), status -> mTTS.setLanguage(Locale.UK));
+    }
+
+    private void toggleReadOut() {
+        ImageButton ttsButton =   findViewById(R.id.tts_btn);
+        if(ttsButton.isSelected()) {
+            ttsButton.setSelected(false);
+            mTTS.stop();
+        }else {
+            ttsButton.setSelected(true);
+            List<Article> articleList =  mNewscastAdaptor.getNewsResponse().getArticles();
+             for(int i=0;i<articleList.size();i++) {
+                if(i==0)
+                  mTTS.speak( articleList.get(i).getTitle(), TextToSpeech.QUEUE_FLUSH, null);
+                else
+                  mTTS.speak(articleList.get(i).getTitle(), TextToSpeech.QUEUE_ADD, null);
+                mTTS.speak("     ", TextToSpeech.QUEUE_ADD, null);
+                mTTS.speak("     ", TextToSpeech.QUEUE_ADD, null);
+             }
+        }
+    }
+
+    private void toggleMenu() {
+        View menu  = findViewById(R.id.cat_filter);
+        if(menu.getVisibility() == View.VISIBLE){
+            menu.setVisibility(View.GONE);
+            findViewById(R.id.close_menu).setVisibility(View.GONE);
+            findViewById(R.id.menu_overlay).setVisibility(View.GONE);
+        }else{
+            menu.setVisibility(View.VISIBLE);
+            findViewById(R.id.close_menu).setVisibility(View.VISIBLE);
+            findViewById(R.id.menu_overlay).setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setFilterCategory() {
+        ArrayList<String> cat = new ArrayList<>();
+        Collections.addAll(cat,mCategories );
+        ListView lt = findViewById(R.id.filter_category);
+        lt.setAdapter(new ArrayAdapter<String>(this,R.layout.category_item,R.id.filter_category_text,cat));
+        lt.setOnItemClickListener(this);
     }
 
     private void setAdView() {
@@ -68,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
     private void toggleSearch() {
         EditText mEditText = findViewById(R.id.tool_search_input);
         ImageButton mSearchButton = findViewById(R.id.tool_search);
+        TextView mCatLabel = findViewById(R.id.cat_label);
 
         if (mEditText.getVisibility() == View.VISIBLE){
             mEditText.setVisibility(View.GONE);
@@ -75,11 +139,22 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
             resetSearch();
             mEditText.removeTextChangedListener(this);
             mEditText.setText("");
+            mCatLabel.setText(getResources().getString(R.string.india_news));
+            hideKeyBoard();
         }else {
             mSearchButton.setSelected(true);
             mEditText.setVisibility(View.VISIBLE);
             mEditText.addTextChangedListener(this);
             mEditText.requestFocus();
+            mCatLabel.setText(getResources().getString(R.string.search_pre_label));
+        }
+    }
+
+    private void hideKeyBoard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
@@ -104,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
     }
 
     private void resetSearch(){
+        ((TextView) findViewById(R.id.cat_label)).setText(getResources().getString(R.string.india_news));
         mNewscastAdaptor.setNewsResponse(mNewsCastData.getNewsCastModel().getValue());
     }
 
@@ -112,6 +188,14 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
         mNewsCastData.getSearchModel().observe(this, projects -> {
             mNewscastAdaptor.setNewsResponse(projects);
         });
+    }
+
+    private void changeCategory(String category) {
+        mNewsCastData.getCategoryResult(category);
+        mNewsCastData.getSearchModel().observe(this, projects -> {
+            mNewscastAdaptor.setNewsResponse(projects);
+        });
+        ((TextView) findViewById(R.id.cat_label)).setText(category);
     }
 
     @Override
@@ -156,8 +240,11 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
     public void afterTextChanged(Editable editable) {
         if(editable.length()==0){
             resetSearch();
-        }else
+            ((TextView) findViewById(R.id.cat_label)).setText(getResources().getString(R.string.india_news));
+        }else {
             searchArticles(editable.toString());
+            ((TextView) findViewById(R.id.cat_label)).setText(new StringBuilder().append(getResources().getString(R.string.search_pre_label)).append(editable.toString()).toString());
+        }
     }
 
     @Override
@@ -167,5 +254,14 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
         else{
            finish();
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if(i==0)
+            resetSearch();
+        else
+            changeCategory(mCategories[i]);
+        toggleMenu();
     }
 }

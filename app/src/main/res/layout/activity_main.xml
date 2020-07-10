@@ -13,6 +13,14 @@
         android:layout_height="wrap_content"
         android:background="@color/royal_navy">
 
+        <ImageView
+            android:id="@+id/tool_logo"
+            android:layout_width="256dp"
+            android:layout_height="64dp"
+            android:layout_centerHorizontal="true"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/news_logo_1" />
+
         <ImageButton
             android:id="@+id/tool_search"
             android:layout_width="wrap_content"
@@ -25,12 +33,34 @@
             app:srcCompat="@android:drawable/ic_menu_search" />
 
         <ImageView
-            android:id="@+id/tool_logo"
-            android:layout_width="256dp"
-            android:layout_height="64dp"
-            android:layout_centerHorizontal="true"
-            android:scaleType="fitXY"
-            app:srcCompat="@drawable/news_logo_1" />
+            android:id="@+id/cat_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            app:srcCompat="@android:drawable/ic_menu_sort_by_size" />
+
+        <TextView
+            android:id="@+id/cat_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/india_news"
+            android:layout_below="@id/tool_logo"
+            android:layout_alignParentStart="true"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:textColor="#ffffff"
+            android:textSize="18sp"/>
+
+        <ImageButton
+            android:id="@+id/tts_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/search_background"
+            app:srcCompat="@drawable/speaking" />
 
     </RelativeLayout>
 
@@ -70,6 +100,50 @@
     <fragment android:name="com.kyser.thenews.component.WebContentFragment"
         android:id="@+id/content_web_fragment"
         android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <RelativeLayout
+        android:id="@+id/menu_overlay"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        android:background="@color/black_overlay"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/cat_filter"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/royal_navy"
+        android:visibility="gone" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="#ffffffff"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="10dp"
+            android:background="@color/black_overlay"
+            android:text="Categories" />
+
+        <ListView
+            android:id="@+id/filter_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/close_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/black_overlay"
+        android:visibility="gone"
+        android:layout_toEndOf="@id/cat_filter"
+        android:layout_marginTop="10dp"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+
 </RelativeLayout>

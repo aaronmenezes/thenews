@@ -30,7 +30,7 @@
             android:paddingHorizontal="10dp"
             android:textColor="@color/card_txt_color"
             android:textSize="14sp"
-            android:maxLines="3"
+            android:maxLines="5"
             android:text="TextView" />
     </LinearLayout>
 

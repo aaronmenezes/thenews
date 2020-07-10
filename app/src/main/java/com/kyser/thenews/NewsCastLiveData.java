@@ -25,10 +25,16 @@ public class NewsCastLiveData  extends AndroidViewModel {
         mSearchResultList = NewsSource.getInstance().getSearchResult(query);
     }
 
+    public void getCategoryResult(String category){
+        mSearchResultList = NewsSource.getInstance().getCategoryResult(category);
+    }
+
     public MutableLiveData<NewsResponse> getNewsCastModel(){
        return mediaListObservable;
     }
     public MutableLiveData<NewsResponse> getSearchModel(){
         return mSearchResultList;
     }
+
+
 }
