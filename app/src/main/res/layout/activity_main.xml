@@ -30,7 +30,7 @@
             android:background="@drawable/search_background"
             android:paddingHorizontal="10dp"
             android:paddingVertical="5dp"
-            app:srcCompat="@android:drawable/ic_menu_search" />
+            app:srcCompat="@drawable/search" />
 
         <ImageView
             android:id="@+id/cat_menu"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="10dp"
             android:paddingVertical="10dp"
-            app:srcCompat="@android:drawable/ic_menu_sort_by_size" />
+            app:srcCompat="@drawable/menu" />
 
         <TextView
             android:id="@+id/cat_label"
@@ -60,11 +60,11 @@
             android:paddingVertical="10dp"
             android:layout_alignParentEnd="true"
             android:background="@drawable/search_background"
-            app:srcCompat="@drawable/speaking" />
+            app:srcCompat="@drawable/reading_book" />
 
     </RelativeLayout>
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/tool_search_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -78,7 +78,18 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:visibility="gone"/>
-    </FrameLayout>
+
+        <ImageButton
+            android:id="@+id/speak_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/transparent"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/mic"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/news_cast"

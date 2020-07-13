@@ -9,9 +9,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
     private int mInterstitialCounter = 0;
     private final String[] mCategories = {"India","Business", "Entertainment", "General", "Health", "Science ", "Sports", "Technology"};
     private TextToSpeech mTTS;
+    private final int REQ_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,17 +67,28 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
         setAdView();
         setFilterCategory();
 
-        findViewById(R.id.tool_search).setOnClickListener(view -> {
-            toggleSearch();
-        });
+        findViewById(R.id.tool_search).setOnClickListener(view -> toggleSearch());
         findViewById(R.id.cat_menu).setOnClickListener(view -> toggleMenu());
         findViewById(R.id.close_menu).setOnClickListener(view -> toggleMenu());
         findViewById(R.id.menu_overlay).setOnClickListener(view -> toggleMenu());
-        findViewById(R.id.tts_btn).setOnClickListener(view -> { toggleReadOut();});
+        findViewById(R.id.tts_btn).setOnClickListener(view -> toggleReadOut());
+        findViewById(R.id.speak_btn).setOnClickListener(view -> startSpeechSearch());
 
         setRecyclerView();
         initViewModel();
         findViewById(R.id.content_web_fragment).setVisibility(View.GONE);
+    }
+
+    private void startSpeechSearch() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Need to speak");
+        try {
+            startActivityForResult(intent, REQ_CODE);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),  "Sorry your device not supported",  Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void initTTS() {
@@ -132,9 +148,11 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
         EditText mEditText = findViewById(R.id.tool_search_input);
         ImageButton mSearchButton = findViewById(R.id.tool_search);
         TextView mCatLabel = findViewById(R.id.cat_label);
+        ImageButton mSpeakButton = findViewById(R.id.speak_btn);
 
         if (mEditText.getVisibility() == View.VISIBLE){
             mEditText.setVisibility(View.GONE);
+            mSpeakButton.setVisibility(View.GONE);
             mSearchButton.setSelected(false);
             resetSearch();
             mEditText.removeTextChangedListener(this);
@@ -144,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
         }else {
             mSearchButton.setSelected(true);
             mEditText.setVisibility(View.VISIBLE);
+            mSpeakButton.setVisibility(View.VISIBLE);
             mEditText.addTextChangedListener(this);
             mEditText.requestFocus();
             mCatLabel.setText(getResources().getString(R.string.search_pre_label));
@@ -244,6 +263,23 @@ public class MainActivity extends AppCompatActivity implements NewsItemAdaptor.I
         }else {
             searchArticles(editable.toString());
             ((TextView) findViewById(R.id.cat_label)).setText(new StringBuilder().append(getResources().getString(R.string.search_pre_label)).append(editable.toString()).toString());
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQ_CODE: {
+                if (resultCode == RESULT_OK && null != data) {
+                    ArrayList result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    searchArticles( result.get(0).toString() );
+                    ((TextView) findViewById(R.id.cat_label)).setText(new StringBuilder()
+                            .append(getResources().getString(R.string.search_pre_label))
+                            .append( result.get(0).toString() ).toString());
+                }
+                break;
+            }
         }
     }
 
